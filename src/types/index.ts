@@ -1,6 +1,8 @@
 export interface User {
   id: string;
   phoneNumber: string;
+  firstName: string;
+  lastName: string;
   name: string;
   village: string | null;
   hasCompletedOnboarding: boolean;

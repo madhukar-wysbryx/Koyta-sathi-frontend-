@@ -5,14 +5,14 @@ import { BackButton } from '../../components/UI/BackButton';
 
 interface PriorityPlanIntroProps {
   onNext: () => void;
-  onBack: () => void;
+  onBack?: () => void;
 }
 
 export const PriorityPlanIntro: React.FC<PriorityPlanIntroProps> = ({ onNext, onBack }) => {
   return (
     <div className="min-h-screen bg-amber-50 py-8">
       <div className="container-custom text-center">
-        <div className="text-left"><BackButton onBack={onBack} /></div>
+        <div className="text-left"><BackButton onBack={onBack ?? (() => {})} /></div>
         <span className="text-6xl mb-4 block">🎯</span>
         <h2 className="text-2xl font-bold text-gray-800 mb-3">Priority Plan 2026</h2>
         <p className="text-gray-600 mb-6">

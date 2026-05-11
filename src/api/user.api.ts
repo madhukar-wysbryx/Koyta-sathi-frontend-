@@ -5,10 +5,12 @@ export const userApi = {
     const response = await api.get('/user/profile');
     return response.data;
   },
-  updateProfile: async (data: { name: string; village: string }) => {
+
+  updateProfile: async (data: { firstName: string; lastName: string; village: string }) => {
     const response = await api.post('/user/profile', data);
     return response.data;
   },
+
   completeOnboarding: async () => {
     const response = await api.post('/user/complete-onboarding');
     return response.data;

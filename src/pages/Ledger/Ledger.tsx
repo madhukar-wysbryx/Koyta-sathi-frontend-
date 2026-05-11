@@ -20,11 +20,13 @@ interface Transaction {
 export const Ledger: React.FC = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [summary, setSummary] = useState<any>(null);
+  const [warning, setWarning] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState<'taken' | 'repaid'>('taken');
   const [amount, setAmount] = useState('');
   const [purpose, setPurpose] = useState('');
+  const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => { loadLedger(); }, []);
@@ -34,6 +36,8 @@ export const Ledger: React.FC = () => {
       const data = await ledgerApi.getLedger();
       setTransactions(data.transactions);
       setSummary(data.summary);
+      const w = await ledgerApi.getWarnings();
+      setWarning(w?.message || null);
     } catch (error) {
       console.error('Failed to load ledger:', error);
     } finally {
@@ -49,11 +53,12 @@ export const Ledger: React.FC = () => {
         type: modalType,
         amount: parseFloat(amount),
         purpose: purpose || (modalType === 'taken' ? 'General advance' : 'Repayment'),
-        date: new Date().toISOString().split('T')[0],
+        date,
       });
       setShowModal(false);
       setAmount('');
       setPurpose('');
+      setDate(new Date().toISOString().split('T')[0]);
       loadLedger();
     } catch (error) {
       console.error('Failed to add transaction:', error);
@@ -66,6 +71,17 @@ export const Ledger: React.FC = () => {
 
   return (
     <Layout title="Ledger" showBack>
+      {/* Overspending warning */}
+      {warning && (
+        <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-4 flex items-start gap-3">
+          <span className="text-xl">⚠️</span>
+          <div>
+            <p className="text-sm font-semibold text-red-700">Spending Warning</p>
+            <p className="text-sm text-red-600">{warning}</p>
+          </div>
+        </div>
+      )}
+
       {/* Summary cards */}
       {summary && (
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
@@ -85,6 +101,18 @@ export const Ledger: React.FC = () => {
       {summary && (
         <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 mb-6">
           <ProgressBar percentage={summary.visualPercentage} label="Repayment Progress" color="green" />
+          {summary.priorityAdvance > 0 && (
+            <div className="mt-3 pt-3 border-t border-gray-100">
+              <ProgressBar
+                percentage={Math.min((summary.totalAdvance / summary.priorityAdvance) * 100, 100)}
+                label="Priority Advance Used"
+                color={summary.totalAdvance >= summary.priorityAdvance ? 'red' : 'green'}
+              />
+              <p className="text-xs text-gray-400 mt-1">
+                ₹{(summary.totalAdvance || 0).toLocaleString()} of ₹{summary.priorityAdvance.toLocaleString()} priority advance used
+              </p>
+            </div>
+          )}
         </div>
       )}
 
@@ -192,6 +220,17 @@ export const Ledger: React.FC = () => {
           </div>
           <Input label="Amount (₹)" type="number" placeholder="Enter amount" value={amount} onChange={(e) => setAmount(e.target.value)} />
           <Input label="Purpose (Optional)" placeholder={modalType === 'taken' ? 'What is this for?' : 'Repayment reference'} value={purpose} onChange={(e) => setPurpose(e.target.value)} />
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Date</label>
+            <input
+              type="date"
+              value={date}
+              max={new Date().toISOString().split('T')[0]}
+              onChange={(e) => setDate(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+            />
+            <p className="text-xs text-gray-400 mt-1">You can log past installments by selecting an earlier date.</p>
+          </div>
           <Button onClick={handleAddTransaction} loading={submitting} fullWidth>Add to Ledger</Button>
         </div>
       </Modal>

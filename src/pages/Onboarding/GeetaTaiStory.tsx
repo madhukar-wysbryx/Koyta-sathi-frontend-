@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '../../components/UI/Button';
 import { geminiApi } from '../../api/gemini.api';
-
 import { BackButton } from '../../components/UI/BackButton';
 
 interface GeetaTaiStoryProps {
   onNext: () => void;
-  onBack: () => void;
+  onBack?: () => void;
 }
 
 export const GeetaTaiStory: React.FC<GeetaTaiStoryProps> = ({ onNext, onBack }) => {
@@ -44,7 +43,7 @@ export const GeetaTaiStory: React.FC<GeetaTaiStoryProps> = ({ onNext, onBack }) 
   return (
     <div className="min-h-screen bg-gradient-to-b from-amber-50 to-amber-50 py-8">
       <div className="container-custom">
-        <BackButton onBack={onBack} />
+        <BackButton onBack={onBack ?? (() => {})} />
         {/* Progress */}
         <div className="mb-6">
           <div className="flex justify-between text-xs text-gray-500 mb-2">

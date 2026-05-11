@@ -12,12 +12,18 @@ interface LayoutProps {
   children: React.ReactNode;
   title?: string;
   showBack?: boolean;
+  onBack?: () => void;
 }
 
-export const Layout: React.FC<LayoutProps> = ({ children, title, showBack = false }) => {
+export const Layout: React.FC<LayoutProps> = ({ children, title, showBack = false, onBack }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout } = useAuthStore();
+
+  const handleBack = () => {
+    if (onBack) onBack();
+    else navigate(-1);
+  };
 
   const handleLogout = () => {
     logout();
@@ -54,7 +60,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, title, showBack = fals
 
         {/* User + logout */}
         <div className="px-4 py-4 border-t border-amber-100">
-          <div className="flex items-center gap-3 mb-3">
+          {/* <div className="flex items-center gap-3 mb-3">
             <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-sm font-bold text-green-700">
               {user?.name?.[0]?.toUpperCase() || '?'}
             </div>
@@ -62,13 +68,13 @@ export const Layout: React.FC<LayoutProps> = ({ children, title, showBack = fals
               <p className="text-sm font-medium text-gray-800 truncate">{user?.name}</p>
               <p className="text-xs text-gray-400 truncate">{user?.phoneNumber}</p>
             </div>
-          </div>
-          <button
+          </div> */}
+          {/* <button
             onClick={handleLogout}
             className="w-full text-left text-sm text-red-500 hover:text-red-700 px-1 py-1 transition-colors"
           >
             Sign out
-          </button>
+          </button> */}
         </div>
       </aside>
 
@@ -79,7 +85,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, title, showBack = fals
           <div className="flex items-center gap-3">
             {showBack && (
               <button
-                onClick={() => navigate(-1)}
+                onClick={handleBack}
                 className="flex items-center gap-1.5 text-gray-500 hover:text-green-700 transition-colors group"
               >
                 <svg className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>

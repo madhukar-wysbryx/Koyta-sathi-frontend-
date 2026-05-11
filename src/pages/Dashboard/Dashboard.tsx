@@ -11,10 +11,19 @@ export const Dashboard: React.FC = () => {
   const [stats, setStats] = useState<any>(null);
   const [plan, setPlan] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [pdfDownloading, setPdfDownloading] = useState(false);
   const navigate = useNavigate();
   const { user } = useAuthStore();
+  const cameFromOnboarding = !!localStorage.getItem('onboarding-last-step');
 
   useEffect(() => { loadData(); }, []);
+
+  const handleDownloadPdf = async () => {
+    setPdfDownloading(true);
+    try { await priorityApi.downloadBudgetPdf(); }
+    catch (e) { console.error('PDF download failed:', e); }
+    finally { setPdfDownloading(false); }
+  };
 
   const loadData = async () => {
     try {
@@ -31,14 +40,18 @@ export const Dashboard: React.FC = () => {
     }
   };
 
-  if (loading) return <Layout title="Dashboard"><Loader /></Layout>;
+  const handleBackToOnboarding = () => {
+    navigate('/onboarding');
+  };
+
+  if (loading) return <Layout title="Dashboard" showBack onBack={cameFromOnboarding ? handleBackToOnboarding : undefined}><Loader /></Layout>;
 
   const usagePct = stats?.totalBorrowed > 0
     ? Math.min((stats.currentRemaining / stats.totalBorrowed) * 100, 100)
     : 0;
 
   return (
-    <Layout title="Dashboard">
+    <Layout title="Dashboard" showBack onBack={cameFromOnboarding ? handleBackToOnboarding : undefined}>
       {/* Welcome banner */}
       <div className="bg-gradient-to-r from-green-600 to-green-700 rounded-xl p-5 md:p-6 text-white mb-6">
         <h2 className="text-xl md:text-2xl font-bold mb-1">Welcome, {user?.name || 'Koyta'}! 🌾</h2>
@@ -79,7 +92,21 @@ export const Dashboard: React.FC = () => {
         <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
           <div className="flex justify-between items-center mb-3">
             <h3 className="font-semibold text-gray-700">Priority Plan</h3>
-            {plan && <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">Active</span>}
+            <div className="flex items-center gap-2">
+              {plan && <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">Active</span>}
+              {plan && (
+                <button
+                  onClick={handleDownloadPdf}
+                  disabled={pdfDownloading}
+                  className="text-xs bg-green-600 hover:bg-green-700 text-white px-2 py-1 rounded-lg transition disabled:opacity-60 flex items-center gap-1"
+                >
+                  {pdfDownloading ? (
+                    <div className="w-3 h-3 border border-white border-t-transparent rounded-full animate-spin" />
+                  ) : '⬇️'}
+                  PDF
+                </button>
+              )}
+            </div>
           </div>
           {plan ? (
             <div className="space-y-2">

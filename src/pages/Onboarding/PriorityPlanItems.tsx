@@ -6,7 +6,9 @@ import { BackButton } from '../../components/UI/BackButton';
 
 interface PriorityPlanItemsProps {
   onComplete: () => void;
-  onBack: () => void;
+  onBack?: () => void;
+  priorityAdvance?: number;
+  preselectedCategories?: { name: string; isMustHave: boolean }[];
 }
 
 interface PriorityItem {
@@ -18,7 +20,7 @@ interface PriorityItem {
   amount: number;
 }
 
-export const PriorityPlanItems: React.FC<PriorityPlanItemsProps> = ({ onComplete, onBack }) => {
+export const PriorityPlanItems: React.FC<PriorityPlanItemsProps> = ({ onComplete, onBack, priorityAdvance, preselectedCategories }) => {
   const [items, setItems] = useState<PriorityItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -30,11 +32,26 @@ export const PriorityPlanItems: React.FC<PriorityPlanItemsProps> = ({ onComplete
   const loadItems = async () => {
     try {
       const data = await priorityApi.getAvailableItems();
-      setItems(data.map((item: any) => ({
-        ...item,
-        selected: false,
-        amount: item.defaultAmount,
-      })));
+      const apiItems = data.map((item: any) => {
+        const preselected = preselectedCategories?.find(c => c.name === item.name);
+        return {
+          ...item,
+          selected: preselected ? preselected.isMustHave : false,
+          amount: item.defaultAmount,
+        };
+      });
+      // Also add any custom categories from the prioritization game not in the API list
+      const customItems = (preselectedCategories || [])
+        .filter(c => !data.find((d: any) => d.name === c.name))
+        .map((c, i) => ({
+          id: 1000 + i,
+          name: c.name,
+          defaultAmount: 0,
+          description: 'Custom category',
+          selected: c.isMustHave,
+          amount: 0,
+        }));
+      setItems([...apiItems, ...customItems]);
     } catch (error) {
       console.error('Failed to load items:', error);
     } finally {
@@ -63,7 +80,7 @@ export const PriorityPlanItems: React.FC<PriorityPlanItemsProps> = ({ onComplete
     
     setSaving(true);
     try {
-      await priorityApi.createPlan('2026', selectedItems);
+      await priorityApi.createPlan('2026', selectedItems, priorityAdvance);
       onComplete();
     } catch (error) {
       console.error('Failed to save plan:', error);
@@ -75,6 +92,7 @@ export const PriorityPlanItems: React.FC<PriorityPlanItemsProps> = ({ onComplete
   const totalAmount = items.reduce((sum, i) => i.selected ? sum + i.amount : sum, 0);
   const selectedCount = items.filter(i => i.selected).length;
 
+
   if (loading) return <div className="flex justify-center py-10"><div className="w-8 h-8 border-2 border-green-500 rounded-full animate-spin" /></div>;
 
   return (
@@ -82,13 +100,22 @@ export const PriorityPlanItems: React.FC<PriorityPlanItemsProps> = ({ onComplete
       {/* Sticky header */}
       <div className="sticky top-0 z-10 bg-amber-50 border-b border-amber-100 px-4 py-4">
         <div className="max-w-2xl mx-auto">
-          <BackButton onBack={onBack} />
+          <BackButton onBack={onBack ?? (() => {})} />
           <h2 className="text-xl font-bold text-gray-800">Choose Your Priorities</h2>
-          <p className="text-sm text-gray-500 mt-0.5">Select items and set your estimated budget</p>
+          <p className="text-sm text-gray-500 mt-0.5">Select items and set your estimated budget — <span className="text-red-500 font-medium">required to continue</span></p>
         </div>
       </div>
 
       <div className="max-w-2xl mx-auto px-4 py-5">
+        {/* Priority advance context */}
+        {priorityAdvance && priorityAdvance > 0 && (
+          <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 mb-4">
+            <p className="text-sm text-amber-800">
+              🎯 Your priority advance limit: <strong>₹{priorityAdvance.toLocaleString()}</strong>. Select items that fit within this amount.
+            </p>
+          </div>
+        )}
+
         {/* Items list */}
         <div className="space-y-3 mb-6">
           {items.map((item) => (
@@ -165,7 +192,7 @@ export const PriorityPlanItems: React.FC<PriorityPlanItemsProps> = ({ onComplete
           fullWidth
           size="lg"
         >
-          Save & Continue →
+          {selectedCount === 0 ? 'Select at least one item to continue' : 'Save & Continue →'}
         </Button>
       </div>
     </div>

@@ -6,6 +6,7 @@ interface WelcomeScreenProps {
 }
 
 export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onNext }) => {
+
   return (
     <div className="min-h-screen bg-amber-50">
       <div className="container-custom py-12">
@@ -21,7 +22,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onNext }) => {
           Koyta-Sathi
         </h1>
         <p className="text-center text-gray-600 mb-8">
-          आपका साथी, आपकी तरक्की
+          Your companion for a better season
         </p>
 
         {/* Research Notes Card */}

@@ -12,10 +12,11 @@ export const Login: React.FC = () => {
   const [loginPhone, setLoginPhone] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
 
-  const [signupName, setSignupName] = useState('');
-  const [signupPhone, setSignupPhone] = useState('');
-  const [signupPassword, setSignupPassword] = useState('');
-  const [signupVillage, setSignupVillage] = useState('');
+  const [signupFirstName, setSignupFirstName] = useState('');
+  const [signupLastName, setSignupLastName]   = useState('');
+  const [signupPhone, setSignupPhone]         = useState('');
+  const [signupPassword, setSignupPassword]   = useState('');
+  const [signupVillage, setSignupVillage]     = useState('');
 
   const navigate = useNavigate();
   const setAuth = useAuthStore((s) => s.setAuth);
@@ -28,6 +29,9 @@ export const Login: React.FC = () => {
     try {
       const data = await authApi.login(loginPhone, loginPassword);
       setAuth(data.token, data.user);
+      if (!data.user.hasCompletedOnboarding) {
+        localStorage.removeItem('onboarding-last-step');
+      }
       navigate(data.user.hasCompletedOnboarding ? '/dashboard' : '/onboarding');
     } catch (err: any) {
       setError(err.response?.data?.message || 'Login failed. Check your credentials.');
@@ -36,14 +40,16 @@ export const Login: React.FC = () => {
 
   const handleSignup = async () => {
     setError('');
-    if (!validateName(signupName)) { setError('Name must be at least 2 characters'); return; }
+    if (!validateName(signupFirstName)) { setError('First name must be at least 2 characters'); return; }
+    if (!signupLastName.trim()) { setError('Last name is required'); return; }
     if (!validatePhoneNumber(signupPhone)) { setError('Enter a valid 10-digit phone number'); return; }
     if (signupPassword.length < 6) { setError('Password must be at least 6 characters'); return; }
     if (!signupVillage.trim()) { setError('Village is required'); return; }
     setLoading(true);
     try {
-      const data = await authApi.signup({ phoneNumber: signupPhone, password: signupPassword, name: signupName, village: signupVillage });
+      const data = await authApi.signup({ phoneNumber: signupPhone, password: signupPassword, firstName: signupFirstName.trim(), lastName: signupLastName.trim(), village: signupVillage });
       setAuth(data.token, data.user);
+      localStorage.removeItem('onboarding-last-step');
       navigate('/onboarding');
     } catch (err: any) {
       const msg = err.response?.data?.message;
@@ -131,13 +137,17 @@ export const Login: React.FC = () => {
             <div className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-                  <input type="text" placeholder="Your name" className={inputClass} value={signupName} onChange={(e) => setSignupName(e.target.value)} />
+                  <label className="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                  <input type="text" placeholder="First name" className={inputClass} value={signupFirstName} onChange={(e) => setSignupFirstName(e.target.value)} />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Village</label>
-                  <input type="text" placeholder="Your village" className={inputClass} value={signupVillage} onChange={(e) => setSignupVillage(e.target.value)} />
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                  <input type="text" placeholder="Last name" className={inputClass} value={signupLastName} onChange={(e) => setSignupLastName(e.target.value)} />
                 </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Village</label>
+                <input type="text" placeholder="Your village" className={inputClass} value={signupVillage} onChange={(e) => setSignupVillage(e.target.value)} />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>

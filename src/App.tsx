@@ -1395,11 +1395,13 @@
 
 import { BrowserRouter } from 'react-router-dom'
 import { AppRoutes } from './routes/AppRoutes'
+import { GlobalTTSWidget } from './components/UI/GlobalTTSWidget'
 
 function App() {
   return (
     <BrowserRouter>
       <AppRoutes />
+      <GlobalTTSWidget />
     </BrowserRouter>
   )
 }
