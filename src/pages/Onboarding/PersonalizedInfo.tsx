@@ -6,21 +6,19 @@ interface PersonalizedInfoProps {
   plannedAdvance: number;
   totalArrears: number;
   onNext: (revisedAdvance: number) => void;
+  onRevise: () => void;
   onBack: () => void;
 }
 
 const DAILY_WAGE = 500;
 
 export const PersonalizedInfo: React.FC<PersonalizedInfoProps> = ({
-  plannedAdvance, totalArrears, onNext, onBack,
+  plannedAdvance, totalArrears, onNext, onRevise, onBack,
 }) => {
-  const [revised, setRevised] = React.useState<string>(String(plannedAdvance));
-
   const combinedTotal   = plannedAdvance + totalArrears;
   const daysForAdvance  = Math.ceil(plannedAdvance / DAILY_WAGE);
   const daysForArrears  = Math.ceil(totalArrears / DAILY_WAGE);
   const daysForCombined = Math.ceil(combinedTotal / DAILY_WAGE);
-  const revisedDays     = Math.ceil((parseFloat(revised) || 0) / DAILY_WAGE);
 
   return (
     <div className="min-h-screen bg-amber-50 py-8">
@@ -29,8 +27,8 @@ export const PersonalizedInfo: React.FC<PersonalizedInfoProps> = ({
 
         <div className="text-center mb-6">
           <span className="text-4xl">📊</span>
-          <h2 className="text-2xl font-bold text-gray-800 mt-2">Your Repayment Picture</h2>
-          <p className="text-gray-500 text-sm mt-1">Based on your past season data</p>
+          <h2 className="text-2xl font-bold text-gray-800 mt-2">Advance Plan 2026</h2>
+          <p className="text-gray-500 text-sm mt-1">What is your planned advance amount as a koyta for this season?</p>
         </div>
 
         {/* Breakdown card */}
@@ -87,9 +85,9 @@ export const PersonalizedInfo: React.FC<PersonalizedInfoProps> = ({
                 <p className="text-4xl font-bold text-amber-700 my-2 text-center">{daysForAdvance} days</p>
               </>
             )}
-            <p className="text-xs text-amber-600 text-center mt-2">
+            {/* <p className="text-xs text-amber-600 text-center mt-2">
               Based on ~₹{DAILY_WAGE}/day harvesting rate
-            </p>
+            </p> */}
             <div className="mt-3 pt-3 border-t border-amber-200">
               <p className="text-xs text-amber-700 font-semibold">
                 📌 IMPORTANT: This is a broad estimate only. Actual repayment will depend on days worked, wage rates, and other factors this season.
@@ -99,48 +97,26 @@ export const PersonalizedInfo: React.FC<PersonalizedInfoProps> = ({
         </div>
 
         {/* Revise plan */}
-        <div className="bg-white rounded-xl p-5 border border-green-200 mb-4">
+        <div className="bg-white rounded-xl p-5 border border-green-200 mb-6">
           <p className="text-sm font-semibold text-green-800 mb-1">Would you like to revise your plan?</p>
-          <p className="text-xs text-gray-500 mb-3">
+          <p className="text-xs text-gray-500 mb-4">
             You can take only what you need for priority expenses now, and request more later.
           </p>
-          <div className="space-y-1">
-            <label className="block text-xs font-medium text-gray-600">Revised advance amount (₹)</label>
-            <input
-              type="number"
-              value={revised}
-              onChange={e => setRevised(e.target.value)}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-              placeholder="Enter revised amount"
-            />
+          <div className="flex gap-3">
+            <button
+              onClick={onRevise}
+              className="flex-1 py-2.5 rounded-lg text-sm font-semibold border-2 border-green-500 text-green-700 bg-white hover:bg-green-50 transition"
+            >
+              Yes
+            </button>
+            <button
+              onClick={() => onNext(plannedAdvance)}
+              className="flex-1 py-2.5 rounded-lg text-sm font-semibold bg-green-600 hover:bg-green-700 text-white transition"
+            >
+              No, Keep It
+            </button>
           </div>
-          {parseFloat(revised) > 0 && parseFloat(revised) !== plannedAdvance && (
-            <div className="mt-3 bg-green-50 rounded-lg p-3">
-              <p className="text-sm text-green-700">
-                ✅ Revised plan: <strong>{revisedDays} days</strong> of work to repay ₹{parseFloat(revised).toLocaleString()}
-                {totalArrears > 0 && (
-                  <span className="block text-xs text-green-600 mt-1">
-                    Plus {daysForArrears} days for arrears = {Math.ceil((parseFloat(revised) + totalArrears) / DAILY_WAGE)} days total
-                  </span>
-                )}
-              </p>
-            </div>
-          )}
         </div>
-
-        <div className="bg-blue-50 rounded-lg p-3 mb-6">
-          <p className="text-sm text-blue-700">
-            📌 Harvard research shows households that plan their advance carefully are more likely to stay within budget.
-          </p>
-        </div>
-
-        <Button
-          onClick={() => onNext(parseFloat(revised) || plannedAdvance)}
-          disabled={!revised || parseFloat(revised) <= 0}
-          fullWidth
-        >
-          Continue to Priority Plan →
-        </Button>
       </div>
     </div>
   );

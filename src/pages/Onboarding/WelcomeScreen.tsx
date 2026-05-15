@@ -26,22 +26,35 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onNext }) => {
         </p>
 
         {/* Research Notes Card */}
-        <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 mb-6">
-          <h3 className="font-semibold text-yellow-800 mb-2">📋 Important Notes</h3>
-          <p className="text-sm text-yellow-700 mb-2">
-            This is a research study by Harvard University & SOPPECOM to improve financial 
-            well-being of sugarcane cutters in Maharashtra.
-          </p>
-          <p className="text-xs text-yellow-600">
-            Your data will be deleted by April 2027
-          </p>
-        </div>
+        <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 mb-8">
+          <h3 className="font-semibold text-yellow-800 mb-4">📋 Important Notes</h3>
 
-        {/* Disclaimer */}
-        <div className="bg-gray-50 rounded-lg p-3 mb-8">
-          <p className="text-xs text-gray-500 text-center">
-            ⚠️ Not Financial Advice: This is a tool to help you track debt and plan.
-          </p>
+          {/* Research Study */}
+          <div className="mb-4">
+            <p className="text-sm font-semibold text-yellow-800 mb-1">Research Study:</p>
+            <p className="text-sm text-yellow-700 mb-2">
+              We are inviting you to use this app over the next few months as part of a research
+              initiative with SOPPECOM being led by Professor Eliana La Ferrara and Aditi Bhowmick
+              at Harvard University. The purpose of the research is to develop and assess tools that
+              can potentially improve the financial well-being of sugarcane cutters in Maharashtra.
+            </p>
+            <p className="text-sm text-yellow-700">
+              Any information you provide in the app will only be available to the mentioned
+              researchers for analysis purposes only. All data provided in the app will be deleted
+              from app storage by the end of the agricultural cycle (i.e. April 2027).
+            </p>
+          </div>
+
+          <div className="border-t border-yellow-200 my-3" />
+
+          {/* Not Financial Advice */}
+          <div>
+            <p className="text-sm font-semibold text-yellow-800 mb-1">Not Financial Advice:</p>
+            <p className="text-sm text-yellow-700">
+              This tool is intended to help users track debt and plan finances. It does not provide
+              professional financial advice or recommendations.
+            </p>
+          </div>
         </div>
 
         {/* Continue Button */}

@@ -14,14 +14,22 @@ interface Question {
 interface BudgetQuizProps {
   onComplete: (answers: Record<string, string>) => void;
   onBack?: () => void;
+  savedIndex?: number;
+  savedAnswers?: Record<string, string>;
+  savedSelected?: string | null;
+  onStateChange?: (index: number, answers: Record<string, string>, selected: string | null) => void;
 }
 
-export const BudgetQuiz: React.FC<BudgetQuizProps> = ({ onComplete, onBack }) => {
+export const BudgetQuiz: React.FC<BudgetQuizProps> = ({ onComplete, onBack, savedIndex = 0, savedAnswers = {}, savedSelected = null, onStateChange }) => {
   const [questions, setQuestions]           = useState<Question[]>([]);
-  const [currentIndex, setCurrentIndex]     = useState(0);
-  const [answers, setAnswers]               = useState<Record<string, string>>({});
-  const [selectedOption, setSelectedOption] = useState<string | null>(null);
+  const [currentIndex, setCurrentIndex]     = useState(savedIndex);
+  const [answers, setAnswers]               = useState<Record<string, string>>(savedAnswers);
+  const [selectedOption, setSelectedOption] = useState<string | null>(savedSelected);
   const [loading, setLoading]               = useState(true);
+
+  const syncState = (index: number, ans: Record<string, string>, sel: string | null) => {
+    onStateChange?.(index, ans, sel);
+  };
 
   useEffect(() => { loadQuestions(); }, []);
 
@@ -43,8 +51,11 @@ export const BudgetQuiz: React.FC<BudgetQuizProps> = ({ onComplete, onBack }) =>
     setSelectedOption(null);
 
     if (currentIndex + 1 < questions.length) {
-      setCurrentIndex(currentIndex + 1);
+      const nextIndex = currentIndex + 1;
+      setCurrentIndex(nextIndex);
+      syncState(nextIndex, newAnswers, null);
     } else {
+      syncState(currentIndex, newAnswers, null);
       onComplete(newAnswers);
     }
   };
@@ -84,7 +95,10 @@ export const BudgetQuiz: React.FC<BudgetQuizProps> = ({ onComplete, onBack }) =>
               return (
                 <div
                   key={idx}
-                  onClick={() => setSelectedOption(optionKey)}
+                  onClick={() => {
+                    setSelectedOption(optionKey);
+                    syncState(currentIndex, answers, optionKey);
+                  }}
                   className={`flex items-center gap-3 p-3 border-2 rounded-lg cursor-pointer transition-all ${
                     isSelected
                       ? 'border-green-500 bg-green-50'

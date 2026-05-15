@@ -18,8 +18,39 @@ export const Login: React.FC = () => {
   const [signupPassword, setSignupPassword]   = useState('');
   const [signupVillage, setSignupVillage]     = useState('');
 
+  // Forgot password state
+  const [showForgot, setShowForgot]         = useState(false);
+  const [forgotPhone, setForgotPhone]       = useState('');
+  const [forgotPassword, setForgotPassword] = useState('');
+  const [forgotLoading, setForgotLoading]   = useState(false);
+  const [forgotError, setForgotError]       = useState('');
+  const [forgotSuccess, setForgotSuccess]   = useState(false);
+
   const navigate = useNavigate();
   const setAuth = useAuthStore((s) => s.setAuth);
+
+  const openForgot = () => {
+    setForgotPhone(''); setForgotPassword('');
+    setForgotError(''); setForgotSuccess(false);
+    setShowForgot(true);
+  };
+
+  const closeForgot = () => setShowForgot(false);
+
+  const handleResetPassword = async () => {
+    setForgotError('');
+    if (!validatePhoneNumber(forgotPhone)) { setForgotError('Enter a valid 10-digit phone number'); return; }
+    if (forgotPassword.length < 6) { setForgotError('New password must be at least 6 characters'); return; }
+    setForgotLoading(true);
+    try {
+      await authApi.resetPassword(forgotPhone, forgotPassword);
+      setForgotSuccess(true);
+    } catch (err: any) {
+      setForgotError(err.response?.data?.message || 'Could not reset password. Check your phone number.');
+    } finally {
+      setForgotLoading(false);
+    }
+  };
 
   const handleLogin = async () => {
     setError('');
@@ -132,6 +163,13 @@ export const Login: React.FC = () => {
               <button onClick={handleLogin} disabled={loading} className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-medium transition disabled:opacity-60 mt-2">
                 {loading ? 'Signing in...' : 'Sign In'}
               </button>
+              <button
+                type="button"
+                onClick={openForgot}
+                className="w-full text-center text-sm text-green-700 hover:text-green-900 font-medium mt-3 transition"
+              >
+                Forgot Password?
+              </button>
             </div>
           ) : (
             <div className="space-y-4">
@@ -164,6 +202,85 @@ export const Login: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* Forgot Password Modal */}
+      {showForgot && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
+          onClick={(e) => { if (e.target === e.currentTarget) closeForgot(); }}
+        >
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6">
+            {forgotSuccess ? (
+              <div className="text-center py-4">
+                <div className="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-7 h-7 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-bold text-gray-900 mb-1">Password Updated!</h3>
+                <p className="text-sm text-gray-500 mb-6">Your password has been changed successfully. You can now sign in with your new password.</p>
+                <button
+                  onClick={closeForgot}
+                  className="w-full bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-lg font-medium transition text-sm"
+                >
+                  Back to Sign In
+                </button>
+              </div>
+            ) : (
+              <>
+                <div className="flex items-center justify-between mb-5">
+                  <h3 className="text-lg font-bold text-gray-900">Reset Password</h3>
+                  <button onClick={closeForgot} className="text-gray-400 hover:text-gray-600 transition p-1 rounded-lg hover:bg-gray-100">
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+
+                <p className="text-sm text-gray-500 mb-5">Enter your registered mobile number and choose a new password.</p>
+
+                {forgotError && (
+                  <div className="bg-red-50 border border-red-200 text-red-700 px-3 py-2.5 rounded-lg mb-4 text-sm">
+                    {forgotError}
+                  </div>
+                )}
+
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Mobile Number</label>
+                    <input
+                      type="tel"
+                      placeholder="10-digit number"
+                      maxLength={10}
+                      value={forgotPhone}
+                      onChange={(e) => setForgotPhone(e.target.value)}
+                      className={inputClass}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">New Password</label>
+                    <input
+                      type="password"
+                      placeholder="Min 6 characters"
+                      value={forgotPassword}
+                      onChange={(e) => setForgotPassword(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && handleResetPassword()}
+                      className={inputClass}
+                    />
+                  </div>
+                  <button
+                    onClick={handleResetPassword}
+                    disabled={forgotLoading}
+                    className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-medium transition disabled:opacity-60 text-sm"
+                  >
+                    {forgotLoading ? 'Updating...' : 'Update Password'}
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

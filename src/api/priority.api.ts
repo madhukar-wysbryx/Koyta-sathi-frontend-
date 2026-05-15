@@ -1,10 +1,6 @@
 import api from './axios.config';
 
 export const priorityApi = {
-  getAvailableItems: async () => {
-    const response = await api.get('/priority/available');
-    return response.data;
-  },
   getCurrentPlan: async () => {
     const response = await api.get('/priority/current');
     return response.data;

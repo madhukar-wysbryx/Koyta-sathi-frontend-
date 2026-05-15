@@ -129,8 +129,8 @@ export const Dashboard: React.FC = () => {
       {/* Quick actions */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {[
-          { label: 'View Ledger',   icon: '📒', path: '/ledger',  bg: 'bg-green-50 hover:bg-green-100 text-green-800' },
-          { label: 'My Profile',    icon: '👤', path: '/profile', bg: 'bg-blue-50 hover:bg-blue-100 text-blue-800' },
+          // { label: 'View Ledger',   icon: '📒', path: '/ledger',  bg: 'bg-green-50 hover:bg-green-100 text-green-800' },
+          // { label: 'My Profile',    icon: '👤', path: '/profile', bg: 'bg-blue-50 hover:bg-blue-100 text-blue-800' },
           { label: 'Add Entry',     icon: '➕', path: '/ledger',  bg: 'bg-orange-50 hover:bg-orange-100 text-orange-800' },
           { label: 'Season History',icon: '📅', path: '/profile', bg: 'bg-purple-50 hover:bg-purple-100 text-purple-800' },
         ].map(({ label, icon, path, bg }) => (

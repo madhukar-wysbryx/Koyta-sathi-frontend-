@@ -16,4 +16,9 @@ export const authApi = {
     const response = await api.post('/auth/login', { phoneNumber, password });
     return response.data;
   },
+
+  resetPassword: async (phoneNumber: string, newPassword: string) => {
+    const response = await api.post('/auth/reset-password', { phoneNumber, newPassword });
+    return response.data;
+  },
 };

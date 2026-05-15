@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { WelcomeScreen } from './WelcomeScreen';
-import { ProfileSetup } from './ProfileSetup';
 import { GeetaTaiStory } from './GeetaTaiStory';
 import { BudgetQuiz } from './BudgetQuiz';
 import { QuizResults } from './QuizResults';
-import { PrioritizingGame } from './PrioritizingGame';
-import { PastSeasonData } from './PastSeasonData';
+import { GauriStory } from './GauriStory';
+import { JagdishStory } from './JagdishStory';
+import { StoryPrioritizingGame } from './StoryPrioritizingGame';
+import { StoryPrioritizingResults } from './StoryPrioritizingResults';
+import { PastSeasonData, SeasonEntry, SEASONS, makeEntry } from './PastSeasonData';
 import { PersonalizedInfo } from './PersonalizedInfo';
 import { PriorityPlanIntro } from './PriorityPlanIntro';
-import { PriorityPlanItems } from './PriorityPlanItems';
+import { PriorityPlanItems, UserItem } from './PriorityPlanItems';
 import { ReadyToTrack } from './ReadyToTrack';
 import { userApi } from '../../api/user.api';
 import { OnboardingStepContext } from '../../store/onboardingStepContext';
@@ -21,7 +23,16 @@ export const Onboarding: React.FC = () => {
   const [plannedAdvance, setPlannedAdvance] = useState(0);
   const [totalArrears, setTotalArrears]     = useState(0);
   const [priorityAdvance, setPriorityAdvance] = useState(0);
-  const [priorityCategories, setPriorityCategories] = useState<{ name: string; isMustHave: boolean }[]>([]);
+  const [storyPriorityItems, setStoryPriorityItems] = useState<{ name: string; isMustHave: boolean }[]>([]);
+  const [storyPrioritySkipped, setStoryPrioritySkipped] = useState(false);
+  const [pastSeasons, setPastSeasons] = useState<SeasonEntry[]>(SEASONS.map(s => makeEntry(s.year)));
+  const [pastPlannedAdvance, setPastPlannedAdvance] = useState('');
+  // Lifted state for back-navigation persistence
+  const [quizIndex, setQuizIndex]       = useState(0);
+  const [quizSavedAnswers, setQuizSavedAnswers] = useState<Record<string, string>>({});
+  const [quizSelected, setQuizSelected] = useState<string | null>(null);
+  const [storyGameItems, setStoryGameItems] = useState<{ name: string; isMustHave: boolean }[]>([]);
+  const [priorityPlanItems, setPriorityPlanItems] = useState<UserItem[]>([]);
   const navigate = useNavigate();
 
   const completeOnboarding = async () => {
@@ -36,32 +47,72 @@ export const Onboarding: React.FC = () => {
 
   const goBack = () => setStep(s => Math.max(0, s - 1));
 
-  // Steps:
-  // 0 WelcomeScreen
-  // 1 ProfileSetup
-  // 2 GeetaTaiStory
-  // 3 BudgetQuiz
-  // 4 QuizResults
-  // 5 PrioritizingGame
-  // 6 PastSeasonData       ← recall exercise (2 seasons) + planned advance
-  // 7 PersonalizedInfo     ← workdays calculation + option to revise
-  // 8 PriorityPlanIntro
-  // 9 PriorityPlanItems    ← priority-advance plan
-  // 10 ReadyToTrack
-
-  const steps = [
-    <WelcomeScreen onNext={() => setStep(1)} />,
-    <ProfileSetup onNext={() => setStep(2)} />,
-    <GeetaTaiStory onNext={() => setStep(3)} onBack={goBack} />,
-    <BudgetQuiz onComplete={(answers) => { setQuizAnswers(answers); setStep(4); }} onBack={goBack} />,
-    <QuizResults answers={quizAnswers} onNext={() => setStep(5)} onBack={goBack} />,
-    <PrioritizingGame onComplete={(cats) => { setPriorityCategories(cats); setStep(6); }} onBack={goBack} />,
-    <PastSeasonData onNext={(pa, arrears) => { setPlannedAdvance(pa); setTotalArrears(arrears); setStep(7); }} onBack={goBack} />,
-    <PersonalizedInfo plannedAdvance={plannedAdvance} totalArrears={totalArrears} onNext={(ra) => { setPriorityAdvance(ra); setStep(8); }} onBack={goBack} />,
-    <PriorityPlanIntro onNext={() => setStep(9)} onBack={goBack} />,
-    <PriorityPlanItems onComplete={() => setStep(10)} onBack={goBack} priorityAdvance={priorityAdvance} preselectedCategories={priorityCategories} />,
-    <ReadyToTrack onComplete={completeOnboarding} onBack={goBack} />,
-  ];
+  const renderStep = () => {
+    switch (step) {
+      case 0:  return <WelcomeScreen onNext={() => setStep(1)} />;
+      case 1:  return <GeetaTaiStory onNext={() => setStep(2)} onBack={goBack} />;
+      case 2:  return (
+        <BudgetQuiz
+          onComplete={(answers) => { setQuizAnswers(answers); setStep(3); }}
+          onBack={goBack}
+          savedIndex={quizIndex}
+          savedAnswers={quizSavedAnswers}
+          savedSelected={quizSelected}
+          onStateChange={(idx, ans, sel) => { setQuizIndex(idx); setQuizSavedAnswers(ans); setQuizSelected(sel); }}
+        />
+      );
+      case 3:  return <QuizResults answers={quizAnswers} onNext={() => setStep(4)} onBack={goBack} />;
+      case 4:  return <GauriStory onNext={() => setStep(5)} onBack={goBack} />;
+      case 5:  return <JagdishStory onNext={() => setStep(6)} onBack={goBack} />;
+      case 6:  return (
+        <StoryPrioritizingGame
+          onComplete={(items) => { setStoryPriorityItems(items); setStoryGameItems(items); setStoryPrioritySkipped(false); setStep(7); }}
+          onSkip={() => { setStoryPriorityItems([]); setStoryGameItems([]); setStoryPrioritySkipped(true); setStep(7); }}
+          onBack={goBack}
+          savedItems={storyGameItems}
+        />
+      );
+      case 7:  return (
+        <StoryPrioritizingResults
+          items={storyPriorityItems}
+          skipped={storyPrioritySkipped}
+          onNext={() => setStep(8)}
+          onBack={goBack}
+        />
+      );
+      case 8:  return (
+        <PastSeasonData
+          onNext={(pa, arrears) => { setPlannedAdvance(pa); setTotalArrears(arrears); setStep(9); }}
+          onBack={goBack}
+          seasons={pastSeasons}
+          setSeasons={setPastSeasons}
+          plannedAdvance={pastPlannedAdvance}
+          setPlannedAdvance={setPastPlannedAdvance}
+        />
+      );
+      case 9:  return (
+        <PersonalizedInfo
+          plannedAdvance={plannedAdvance}
+          totalArrears={totalArrears}
+          onNext={(ra) => { setPriorityAdvance(ra); setStep(10); }}
+          onRevise={() => setStep(8)}
+          onBack={goBack}
+        />
+      );
+      case 10: return <PriorityPlanIntro onNext={() => setStep(11)} onBack={goBack} />;
+      case 11: return (
+        <PriorityPlanItems
+          onComplete={() => setStep(12)}
+          onBack={goBack}
+          priorityAdvance={priorityAdvance}
+          savedItems={priorityPlanItems}
+          onItemsChange={setPriorityPlanItems}
+        />
+      );
+      case 12: return <ReadyToTrack onComplete={completeOnboarding} onBack={goBack} />;
+      default: return null;
+    }
+  };
 
   return (
     <OnboardingStepContext.Provider value={{ step, setStep }}>
@@ -69,7 +120,7 @@ export const Onboarding: React.FC = () => {
         <span className="text-2xl">🌾</span>
         <span className="text-lg font-bold text-green-700">Koyta-Sathi</span>
       </nav>
-      {steps[step]}
+      {renderStep()}
     </OnboardingStepContext.Provider>
   );
 };

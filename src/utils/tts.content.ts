@@ -7,10 +7,10 @@ type PageKey =
   | 'ledger'
   | 'profile'
   | 'onboarding_welcome'
-  | 'onboarding_profile'
   | 'onboarding_story'
+  | 'onboarding_gauri'
+  | 'onboarding_jagdish'
   | 'onboarding_quiz'
-  | 'onboarding_prioritizing'
   | 'onboarding_past_season'
   | 'onboarding_priority_intro'
   | 'onboarding_priority_items'
@@ -32,14 +32,14 @@ const content: Record<Language, Translations> = {
       'This is your profile page. You can update your name and village here. Your phone number is shown below your name. Tap Save Changes to update your information.',
     onboarding_welcome:
       'Welcome to Koyta-Sathi. This app is part of a research study by Harvard University and SOPPECOM to help sugarcane workers manage their advance and budget better. Your data will be kept safe and deleted by April 2027. Tap Let us Begin to start.',
-    onboarding_profile:
-      'Please tell us your name and village. This helps us personalise the app for you. Your phone number is already saved. Tap Continue when you are ready.',
     onboarding_story:
       'This is Geeta Tai\'s story. Geeta Tai is a sugarcane cutter from Maharashtra. She cannot read or write, but she knows how to plan for her family\'s future. She follows 6 steps to make a budget. First, set financial goals. Second, estimate your income. Third, decide how much to save. Fourth, list all expenses. Fifth, make sure expenses are not more than income. Sixth, follow the budget every month.',
+    onboarding_gauri:
+      'This is Gauri\'s story. Gauri made a budget with her family. At the market, a friend offered her beautiful cloth. Gauri was tempted but remembered her budget had no money for it. She was glad her savings were in the bank and not easy to reach. Later, her stove broke, and she used the emergency fund she had set aside to buy a new one. Key lesson: Keep savings out of reach and set aside money for unexpected expenses.',
+    onboarding_jagdish:
+      'This is Jagdish\'s story. During the festival season, Jagdish planned for extra expenses. He tracked his spending weekly. When he realized he spent too much on gifts, he looked at his budget and decided to spend less on a new shirt he wanted, to make up for the overspending. Key lesson: Track spending regularly. If you overspend on one thing, spend less on another.',
     onboarding_quiz:
       'This is the budget quiz. Answer the questions to test your understanding of budgeting. Select the correct answer and tap Next Question to continue.',
-    onboarding_prioritizing:
-      'This is the prioritizing game. Look at each expense and decide if it is a Must Have right now, or if it can Wait for Later. Tap each item to change your choice.',
     onboarding_past_season:
       'Please enter your past season information. Tell us how much advance you took, how many days you worked, and how much arrears you have remaining. This helps us calculate your repayment capacity.',
     onboarding_priority_intro:
@@ -63,14 +63,14 @@ const content: Record<Language, Translations> = {
       'यह आपका प्रोफाइल पेज है। आप यहां अपना नाम और गांव अपडेट कर सकते हैं। आपका फोन नंबर नीचे दिखाई देता है। जानकारी अपडेट करने के लिए परिवर्तन सहेजें दबाएं।',
     onboarding_welcome:
       'कोयता-साथी में आपका स्वागत है। यह ऐप हार्वर्ड विश्वविद्यालय और सोप्पेकॉम के एक शोध अध्ययन का हिस्सा है जो गन्ना मजदूरों को अपना अग्रिम और बजट बेहतर तरीके से प्रबंधित करने में मदद करता है। आपका डेटा सुरक्षित रखा जाएगा और अप्रैल 2027 तक हटा दिया जाएगा। शुरू करने के लिए चलिए शुरू करें दबाएं।',
-    onboarding_profile:
-      'कृपया अपना नाम और गांव बताएं। इससे हमें आपके लिए ऐप को व्यक्तिगत बनाने में मदद मिलती है। आपका फोन नंबर पहले से सहेजा गया है। तैयार होने पर जारी रखें दबाएं।',
     onboarding_story:
       'यह गीता ताई की कहानी है। गीता ताई महाराष्ट्र की एक गन्ना काटने वाली हैं। वे पढ़-लिख नहीं सकतीं, लेकिन वे अपने परिवार के भविष्य की योजना बनाना जानती हैं। वे बजट बनाने के लिए 6 कदम अपनाती हैं। पहला, वित्तीय लक्ष्य निर्धारित करें। दूसरा, आय का अनुमान लगाएं। तीसरा, बचत का निर्णय करें। चौथा, सभी खर्चों की सूची बनाएं। पांचवां, सुनिश्चित करें कि खर्च आय से अधिक न हो। छठा, हर महीने बजट का पालन करें।',
+    onboarding_gauri:
+      'यह गौरी की कहानी है। गौरी ने अपने परिवार के साथ बजट बनाया। बाजार में एक दोस्त ने उसे सुंदर कपड़ा दिखाया। गौरी को लालच आया लेकिन उसे याद आया कि उसके बजट में इसके लिए पैसे नहीं हैं। वह खुश थी कि उसकी बचत बैंक में थी और आसानी से नहीं मिल सकती थी। बाद में उसका चूल्हा टूट गया और उसने अपने आपातकालीन फंड से नया खरीदा। मुख्य सीख: बचत को पहुंच से दूर रखें और अप्रत्याशित खर्चों के लिए पैसे अलग रखें।',
+    onboarding_jagdish:
+      'यह जगदीश की कहानी है। त्योहार के मौसम में जगदीश ने अतिरिक्त खर्चों की योजना बनाई। वह हर हफ्ते अपने खर्च को ट्रैक करता था। जब उसे पता चला कि उसने उपहारों पर बहुत ज्यादा खर्च किया, तो उसने बजट देखा और तय किया कि जो नई कमीज वह चाहता था उस पर कम खर्च करेगा। मुख्य सीख: नियमित रूप से खर्च ट्रैक करें। अगर एक चीज पर ज्यादा खर्च हो जाए तो दूसरी चीज पर कम खर्च करें।',
     onboarding_quiz:
       'यह बजट प्रश्नोत्तरी है। बजट की अपनी समझ का परीक्षण करने के लिए प्रश्नों के उत्तर दें। सही उत्तर चुनें और जारी रखने के लिए अगला प्रश्न दबाएं।',
-    onboarding_prioritizing:
-      'यह प्राथमिकता खेल है। प्रत्येक खर्च को देखें और तय करें कि यह अभी जरूरी है या बाद के लिए इंतजार कर सकता है। अपनी पसंद बदलने के लिए प्रत्येक आइटम पर टैप करें।',
     onboarding_past_season:
       'कृपया अपने पिछले सीजन की जानकारी दर्ज करें। बताएं कि आपने कितना अग्रिम लिया, कितने दिन काम किया, और कितना बकाया बचा है। इससे हमें आपकी चुकाने की क्षमता की गणना करने में मदद मिलती है।',
     onboarding_priority_intro:
@@ -94,14 +94,14 @@ const content: Record<Language, Translations> = {
       'Yeh aapka profile page hai. Aap yahan apna naam aur gaon update kar sakte hain. Aapka phone number neeche dikhta hai. Jaankari update karne ke liye Save Changes dabayein.',
     onboarding_welcome:
       'Koyta-Sathi mein aapka swagat hai. Yeh app Harvard University aur SOPPECOM ke ek research study ka hissa hai jo ganna mazdooron ko apna advance aur budget behtar tarike se manage karne mein madad karta hai. Aapka data safe rakha jayega aur April 2027 tak delete kar diya jayega. Shuru karne ke liye Chaliye Shuru Karein dabayein.',
-    onboarding_profile:
-      'Kripya apna naam aur gaon batayein. Isse humein aapke liye app ko personalise karne mein madad milti hai. Aapka phone number pehle se save hai. Taiyar hone par Continue dabayein.',
     onboarding_story:
       'Yeh Geeta Tai ki kahani hai. Geeta Tai Maharashtra ki ek ganna kaatne wali hain. Woh padh-likh nahi sakti, lekin woh apne parivaar ke bhavishya ki planning jaanti hain. Woh budget banane ke liye 6 steps follow karti hain. Pehla, financial goals set karein. Doosra, income ka estimate lagayein. Teesra, bachat ka faisla karein. Chautha, saare kharche ki list banayein. Paanchwa, ensure karein ki kharcha income se zyada na ho. Chhatha, har mahine budget follow karein.',
+    onboarding_gauri:
+      'Yeh Gauri ki kahani hai. Gauri ne apne parivaar ke saath budget banaya. Bazaar mein ek dost ne use sundar kapda dikhaya. Gauri ko lalach aaya lekin use yaad aaya ki uske budget mein iske liye paise nahi hain. Woh khush thi ki uski bachat bank mein thi aur aasani se nahi milti thi. Baad mein uska chulha toot gaya aur usne apne emergency fund se naya kharida. Mukhya seekh: Bachat ko pahunch se door rakhein aur anapekshit kharche ke liye paise alag rakhein.',
+    onboarding_jagdish:
+      'Yeh Jagdish ki kahani hai. Tyohaar ke mausam mein Jagdish ne atirikt kharche ki planning ki. Woh har hafte apna kharcha track karta tha. Jab use pata chala ki usne upharon par bahut zyada kharcha kiya, to usne budget dekha aur tay kiya ki jo nayi kameez woh chahta tha us par kam kharcha karega. Mukhya seekh: Niyamit roop se kharcha track karein. Agar ek cheez par zyada kharcha ho jaye to doosri cheez par kam kharcha karein.',
     onboarding_quiz:
       'Yeh budget quiz hai. Budgeting ki apni samajh test karne ke liye questions ke jawab dein. Sahi jawab chunein aur continue karne ke liye Next Question dabayein.',
-    onboarding_prioritizing:
-      'Yeh prioritizing game hai. Har kharche ko dekhein aur decide karein ki yeh abhi zaroori hai ya baad ke liye wait kar sakta hai. Apni choice badalne ke liye har item par tap karein.',
     onboarding_past_season:
       'Kripya apne pichhle season ki jaankari enter karein. Batayein ki aapne kitna advance liya, kitne din kaam kiya, aur kitna baaki bacha hai. Isse humein aapki repayment capacity calculate karne mein madad milti hai.',
     onboarding_priority_intro:
@@ -125,14 +125,14 @@ const content: Record<Language, Translations> = {
       'हे तुमचे प्रोफाइल पेज आहे. तुम्ही येथे तुमचे नाव आणि गाव अपडेट करू शकता. तुमचा फोन नंबर खाली दिसतो. माहिती अपडेट करण्यासाठी बदल जतन करा दाबा.',
     onboarding_welcome:
       'कोयता-साथीमध्ये आपले स्वागत आहे. हे अॅप हार्वर्ड विद्यापीठ आणि सोप्पेकॉमच्या संशोधन अभ्यासाचा भाग आहे जे ऊस कामगारांना त्यांची आगाऊ रक्कम आणि बजेट अधिक चांगल्या प्रकारे व्यवस्थापित करण्यास मदत करते. तुमचा डेटा सुरक्षित ठेवला जाईल आणि एप्रिल 2027 पर्यंत हटवला जाईल. सुरू करण्यासाठी चला सुरू करूया दाबा.',
-    onboarding_profile:
-      'कृपया तुमचे नाव आणि गाव सांगा. यामुळे आम्हाला तुमच्यासाठी अॅप वैयक्तिकृत करण्यास मदत होते. तुमचा फोन नंबर आधीच जतन केला आहे. तयार असताना सुरू ठेवा दाबा.',
     onboarding_story:
       'ही गीता ताईची कहाणी आहे. गीता ताई महाराष्ट्रातील एक ऊस कापणारी आहेत. त्या वाचू-लिहू शकत नाहीत, पण त्यांना त्यांच्या कुटुंबाच्या भविष्याची योजना करणे माहीत आहे. त्या बजेट बनवण्यासाठी 6 पायऱ्या वापरतात. पहिली, आर्थिक उद्दिष्टे ठरवा. दुसरी, उत्पन्नाचा अंदाज लावा. तिसरी, बचतीचा निर्णय घ्या. चौथी, सर्व खर्चांची यादी करा. पाचवी, खर्च उत्पन्नापेक्षा जास्त नसल्याची खात्री करा. सहावी, दर महिन्याला बजेटचे पालन करा.',
+    onboarding_gauri:
+      'ही गौरीची कहाणी आहे. गौरीने तिच्या कुटुंबासोबत बजेट बनवले. बाजारात एका मैत्रिणीने तिला सुंदर कापड दाखवले. गौरीला मोह झाला पण तिला आठवले की तिच्या बजेटमध्ये त्यासाठी पैसे नाहीत. ती खूश होती की तिची बचत बँकेत होती आणि सहज मिळत नव्हती. नंतर तिची शेगडी मोडली आणि तिने बाजूला ठेवलेल्या आपत्कालीन निधीतून नवीन विकत घेतली. मुख्य धडा: बचत आवाक्याबाहेर ठेवा आणि अनपेक्षित खर्चांसाठी पैसे बाजूला ठेवा.',
+    onboarding_jagdish:
+      'ही जगदीशची कहाणी आहे. सणाच्या हंगामात जगदीशने अतिरिक्त खर्चांची योजना केली. तो दर आठवड्याला खर्च ट्रॅक करत होता. जेव्हा त्याला कळले की त्याने भेटवस्तूंवर खूप जास्त खर्च केला, तेव्हा त्याने बजेट पाहिले आणि ठरवले की जी नवीन शर्ट त्याला हवी होती त्यावर कमी खर्च करायचा. मुख्य धडा: नियमितपणे खर्च ट्रॅक करा. एका गोष्टीवर जास्त खर्च झाला तर दुसऱ्या गोष्टीवर कमी खर्च करा.',
     onboarding_quiz:
       'हे बजेट प्रश्नमंजुषा आहे. बजेटिंगची तुमची समज तपासण्यासाठी प्रश्नांची उत्तरे द्या. योग्य उत्तर निवडा आणि सुरू ठेवण्यासाठी पुढील प्रश्न दाबा.',
-    onboarding_prioritizing:
-      'हे प्राधान्यक्रम खेळ आहे. प्रत्येक खर्च पाहा आणि ठरवा की हे आत्ता आवश्यक आहे किंवा नंतरसाठी थांबू शकते. तुमची निवड बदलण्यासाठी प्रत्येक आयटमवर टॅप करा.',
     onboarding_past_season:
       'कृपया तुमच्या मागील हंगामाची माहिती टाका. सांगा की तुम्ही किती आगाऊ रक्कम घेतली, किती दिवस काम केले आणि किती थकबाकी शिल्लक आहे. यामुळे आम्हाला तुमची परतफेड क्षमता मोजण्यास मदत होते.',
     onboarding_priority_intro:

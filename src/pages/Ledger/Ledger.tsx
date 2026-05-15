@@ -23,7 +23,6 @@ export const Ledger: React.FC = () => {
   const [warning, setWarning] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
-  const [modalType, setModalType] = useState<'taken' | 'repaid'>('taken');
   const [amount, setAmount] = useState('');
   const [purpose, setPurpose] = useState('');
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
@@ -50,9 +49,9 @@ export const Ledger: React.FC = () => {
     setSubmitting(true);
     try {
       await ledgerApi.addTransaction({
-        type: modalType,
+        type: 'taken',
         amount: parseFloat(amount),
-        purpose: purpose || (modalType === 'taken' ? 'General advance' : 'Repayment'),
+        purpose: purpose || 'General advance',
         date,
       });
       setShowModal(false);
@@ -208,18 +207,8 @@ export const Ledger: React.FC = () => {
       {/* Modal */}
       <Modal isOpen={showModal} onClose={() => setShowModal(false)} title="Add Transaction">
         <div className="space-y-4">
-          <div className="flex gap-3">
-            <button
-              className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition ${modalType === 'taken' ? 'bg-red-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
-              onClick={() => setModalType('taken')}
-            >📥 Advance Taken</button>
-            <button
-              className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition ${modalType === 'repaid' ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
-              onClick={() => setModalType('repaid')}
-            >📤 Repaid</button>
-          </div>
           <Input label="Amount (₹)" type="number" placeholder="Enter amount" value={amount} onChange={(e) => setAmount(e.target.value)} />
-          <Input label="Purpose (Optional)" placeholder={modalType === 'taken' ? 'What is this for?' : 'Repayment reference'} value={purpose} onChange={(e) => setPurpose(e.target.value)} />
+          <Input label="Purpose (Optional)" placeholder="What is this for?" value={purpose} onChange={(e) => setPurpose(e.target.value)} />
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Date</label>
             <input
